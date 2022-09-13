@@ -1,22 +1,115 @@
-import React from "react";
-import logo from "./logo.svg";
+import React, { useState } from "react";
 import "./App.css";
 
 function App() {
-  const [data, setData] = React.useState(null);
+  const [teams, setTeams] = useState(
+    "firstTeam 17/05 2\nsecondTeam 07/02 2\nthirdTeam 24/04 1\nfourthTeam 24/01 1"
+  );
+  const [matches, setMatches] = useState(
+    "firstTeam secondTeam 0 3\nthirdTeam fourthTeam 1 1"
+  );
+  const [grpARanking, setGrpARanking] = useState([]);
+  const [grpBRanking, setGrpBRanking] = useState([]);
+  const [hasRanking, setHasRanking] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
 
-  React.useEffect(() => {
-    fetch("/api")
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    setIsProcessing(true);
+
+    const tokenizedTeams = teams.trim().split("\n");
+    const tokenizedMatches = matches.trim().split("\n");
+
+    const requestOptions = {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        rawTeams: tokenizedTeams,
+        rawMatches: tokenizedMatches,
+      }),
+    };
+    console.log(requestOptions);
+
+    fetch("/teamRanking", requestOptions)
       .then((res) => res.json())
-      .then((data) => setData(data.message));
-  }, []);
+      .then((data) => {
+        console.log(data);
+        setIsProcessing(false);
+        setGrpARanking(data.groupARanking);
+        setGrpBRanking(data.groupBRanking);
+        setHasRanking(true);
+      });
+  };
+
+  const reset = (event) => {
+    event.preventDefault();
+    setHasRanking(false);
+    setTeams("");
+    setMatches("");
+  };
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>{!data ? "Loading..." : data}</p>
-      </header>
+    <div className="wrapper">
+      <h1>We are the Champions</h1>
+      {isProcessing && <div>App is processing rankings</div>}
+      {!isProcessing && hasRanking && (
+        <div>
+          Here are the rankings in order!
+          <div>
+            <p>Group A Ranking</p>
+            <ul>
+              {grpARanking.map((teamName, index) => (
+                <li key={index + 1}>
+                  <strong>{index + 1}</strong>: {teamName}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <p>Group B Ranking</p>
+            <ul>
+              {grpBRanking.map((teamName, index) => (
+                <li key={index + 1}>
+                  <strong>{index + 1}</strong>: {teamName}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
+      <form>
+        <fieldset disabled={isProcessing}>
+          <label>
+            <p>Teams</p>
+            <textarea
+              value={teams || ""}
+              onChange={(event) => {
+                setTeams(event.target.value);
+              }}
+            />
+          </label>
+        </fieldset>
+        <fieldset disabled={isProcessing}>
+          <label>
+            <p>Matches</p>
+            <textarea
+              value={matches || ""}
+              onChange={(event) => {
+                setMatches(event.target.value);
+              }}
+            />
+          </label>
+        </fieldset>
+        <button type="submit" disabled={isProcessing} onClick={handleSubmit}>
+          Submit
+        </button>
+        <button disabled={isProcessing} onClick={reset}>
+          Reset
+        </button>
+      </form>
     </div>
   );
 }

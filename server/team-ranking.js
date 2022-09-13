@@ -77,6 +77,8 @@ export function processTeamRanking(req, res) {
         .status(200)
         .json({ groupARanking: groupARanking, groupBRanking: groupBRanking });
     } else {
+      console.log(rawMatches);
+      console.log(rawTeams);
       return res.status(400).json({
         Message: "Team and/or matches is missing",
       });
