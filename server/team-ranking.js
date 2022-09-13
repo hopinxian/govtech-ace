@@ -4,25 +4,19 @@ export function processTeamRanking(req, res) {
   try {
     const { rawTeams, rawMatches } = req.body;
     if (rawTeams && rawMatches) {
-      console.log(rawTeams);
       const teams = new Map();
       for (const index in rawTeams) {
         const rawTeam = rawTeams[index];
-        console.log(rawTeam);
         var teamDetails = rawTeam.split(" ");
-        console.log(teamDetails);
         var teamName = teamDetails[0];
-        console.log(teamName);
         var registrationDate = new Date();
-        console.log(teamDetails[1]);
         registrationDate.setDate(parseInt(teamDetails[1].split("/")[0]));
         registrationDate.setMonth(parseInt(teamDetails[1].split("/")[1]));
         var groupNumber = parseInt(teamDetails[2]);
         var team = new Team(teamName, registrationDate, groupNumber);
         teams.set(teamName, team);
       }
-      console.log(teams);
-
+      
       for (const index in rawMatches) {
         const rawMatch = rawMatches[index];
         var matchDetails = rawMatch.split(" ");
@@ -43,9 +37,6 @@ export function processTeamRanking(req, res) {
           teams.get(nameB).addDraw();
         }
       }
-      console.log("Before ranking");
-      console.log(teams);
-      console.log("Before ranking");
 
       var groupARanking = [];
       var groupBRanking = [];
@@ -77,14 +68,11 @@ export function processTeamRanking(req, res) {
         .status(200)
         .json({ groupARanking: groupARanking, groupBRanking: groupBRanking });
     } else {
-      console.log(rawMatches);
-      console.log(rawTeams);
       return res.status(400).json({
         Message: "Team and/or matches is missing",
       });
     }
   } catch (err) {
-    console.log(err);
     return res.status(500).json({
       message: "Server error occurred when processing team rankings.",
     });

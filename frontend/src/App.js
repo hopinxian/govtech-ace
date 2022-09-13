@@ -31,12 +31,10 @@ function App() {
         rawMatches: tokenizedMatches,
       }),
     };
-    console.log(requestOptions);
 
     fetch("/teamRanking", requestOptions)
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         setIsProcessing(false);
         setGrpARanking(data.groupARanking);
         setGrpBRanking(data.groupBRanking);
