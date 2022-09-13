@@ -2,12 +2,8 @@ import React, { useState } from "react";
 import "./App.css";
 
 function App() {
-  const [teams, setTeams] = useState(
-    "firstTeam 17/05 2\nsecondTeam 07/02 2\nthirdTeam 24/04 1\nfourthTeam 24/01 1"
-  );
-  const [matches, setMatches] = useState(
-    "firstTeam secondTeam 0 3\nthirdTeam fourthTeam 1 1"
-  );
+  const [teams, setTeams] = useState("");
+  const [matches, setMatches] = useState("");
   const [grpARanking, setGrpARanking] = useState([]);
   const [grpBRanking, setGrpBRanking] = useState([]);
   const [hasRanking, setHasRanking] = useState(false);
