@@ -1,14 +1,21 @@
-const path = require("path");
-const express = require("express");
+import path from "path";
+import express from "express";
+import { fileURLToPath } from "url";
+import { processTeamRanking } from "./team-ranking.js";
 
 const PORT = process.env.PORT || 3001;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 
 const app = express();
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 app.use(express.static(path.resolve(__dirname, '../frontend/build')));
 
-app.get("/api", (req, res) => {
-  res.json({ message: "Hello from server!" });
+app.post("/teamRanking", (req, res) => {
+  return processTeamRanking(req, res);
 });
 
 app.get('*', (req, res) => {

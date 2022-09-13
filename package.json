@@ -15,5 +15,6 @@
   },
   "engines": {
     "node": "16.9.0"
-  }
+  },
+   "type": "module"
 }
